@@ -298,13 +298,14 @@ public class RBTree<T> {
 	}
 	
 	public void fixDelete(RBTreeNode<T> xNode) {
-		
+		RBTreeNode<T> brotherNode;
 		while (xNode != root && !xNode.isRed()) {
 			
 			if (xNode == xNode.getParent().getLeftChild()) {
 				
-				RBTreeNode<T> brotherNode = xNode.getParent().getRightChild();
+				brotherNode = xNode.getParent().getRightChild();
 				if (brotherNode.isRed()) {
+					
 					brotherNode.setColor(BLACK);
 					xNode.getParent().setColor(RED);
 					leftRotate(xNode.getParent());
@@ -312,11 +313,52 @@ public class RBTree<T> {
 				}
 				if (!brotherNode.getLeftChild().isRed() && !brotherNode.getRightChild().isRed()) {
 					
+					brotherNode.setColor(RED);
+					xNode = xNode.getParent();
 				}
-				
+				else {
+					if (!brotherNode.getLeftChild().isRed()) {
+						
+						brotherNode.getLeftChild().setColor(BLACK);
+						brotherNode.setColor(RED);
+						rightRotate(brotherNode);
+						brotherNode = xNode.getParent().getRightChild();
+					}
+					brotherNode.setColor(xNode.getParent().isRed());
+					brotherNode.getRightChild().setColor(BLACK);
+					xNode.getParent().setColor(BLACK);
+					leftRotate(xNode.getParent());
+					xNode = root;
+				}
 			}
 			else {
-				
+				brotherNode = xNode.getParent().getLeftChild();
+				if (brotherNode.isRed()) {
+					
+					brotherNode.setColor(BLACK);
+					xNode.getParent().setColor(RED);
+					rightRotate(xNode.getParent());
+					brotherNode = xNode.getParent().getLeftChild();
+				}
+				if (!brotherNode.getLeftChild().isRed() && !brotherNode.getRightChild().isRed()) {
+					
+					brotherNode.setColor(RED);
+					xNode = xNode.getParent();
+				}
+				else {
+					if (!brotherNode.getLeftChild().isRed()) {
+						
+						brotherNode.setColor(RED);
+						brotherNode.getRightChild().setColor(BLACK);
+						rightRotate(brotherNode);
+						brotherNode = xNode.getParent().getLeftChild();
+					}
+					brotherNode.setColor(xNode.getParent().isRed());
+					xNode.getParent().setColor(BLACK);
+					brotherNode.getLeftChild().setColor(BLACK);
+					rightRotate(xNode.getParent());
+					xNode = root;
+				}
 			}
 		}
 		xNode.setColor(BLACK);
@@ -333,11 +375,9 @@ public class RBTree<T> {
 		tree.insert(newNode);
 		newNode = new RBTreeNode<>(13);
 		tree.insert(newNode);
-		System.out.println("root color: " + tree.root.isRed() + "\n9 color: " +
-				tree.search(tree.getRoot(), 9).isRed());
-		System.out.println("11 color: " +tree.search(tree.getRoot(), 11).isRed());
-		System.out.println("12 color: " +tree.search(tree.getRoot(), 12).isRed());
-		System.out.println("root's rightChild: " + tree.getRoot().getRightChild().getValue() + "\n13 color: " +
-				tree.search(tree.getRoot(), 13).isRed());
+		
+		newNode = tree.search(tree.getRoot(), 12);
+		tree.delete(newNode);
+		System.out.println(tree.getRoot().getRightChild().isRed());
 	}
 }
