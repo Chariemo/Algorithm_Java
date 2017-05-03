@@ -378,6 +378,6 @@ public class RBTree<T> {
 		
 		newNode = tree.search(tree.getRoot(), 12);
 		tree.delete(newNode);
-		System.out.println(tree.getRoot().getRightChild().isRed());
+	
 	}
 }
