@@ -2,6 +2,7 @@ package graph;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -259,7 +260,7 @@ public class AdjMatrixGraph {
 		return mst;
 	}
 	
-	public int findSet(Vertex vertex) {
+	private int findSet(Vertex vertex) {
 		
 		int result = -1;
 		Iterator<Entry<Integer, HashSet<Vertex>>> iterator = msts.entrySet().iterator();
@@ -280,7 +281,7 @@ public class AdjMatrixGraph {
 		Vertex vertex, tVertex;
 		Edge edge;
 		int index;
-		PriorityQueue<Vertex> minPriQueue = new PriorityQueue<>();
+		PriorityQueue<Vertex> minKeyPriQueue = new PriorityQueue<>(comSortByKey);
 		for (int i = 0; i < vertexNum; i++) {
 			
 			vertex = vertexs.get(i);
@@ -291,17 +292,17 @@ public class AdjMatrixGraph {
 				vertex.setKey(MAX_VALUE);
 			}
 			vertex.setPreNode(NIL);
-			minPriQueue.offer(vertex);
+			minKeyPriQueue.offer(vertex);
 		}
-		while (!minPriQueue.isEmpty()) {
+		while (!minKeyPriQueue.isEmpty()) {
 			
-			vertex = minPriQueue.poll();
+			vertex = minKeyPriQueue.poll();
 			index = vertex.getIndex();
 			for (int i = 0; i < vertexNum; i++) {
 				
 				edge = adj[index][i];
 				tVertex = edge.geteVertex();
-				if (tVertex != null && minPriQueue.contains(tVertex) && edge.getWeight() < tVertex.getKey()) {
+				if (tVertex != null && minKeyPriQueue.contains(tVertex) && edge.getWeight() < tVertex.getKey()) {
 					
 					tVertex.setKey(edge.getWeight());
 					tVertex.setPreNode(vertex);
@@ -311,34 +312,105 @@ public class AdjMatrixGraph {
 			if (!vertex.equals(sVertex)) {
 				mst.add(adj[vertex.getIndex()][vertex.getPreNode().getIndex()]);
 			}
-			minPriQueue = rebuildePriQue(minPriQueue);
+			minKeyPriQueue = rebuildePriQue(minKeyPriQueue);
 		}
 		
 		return mst;
 	}
 	
-	public PriorityQueue<Vertex> rebuildePriQue(PriorityQueue<Vertex> minPriQueue) {
+	private PriorityQueue<Vertex> rebuildePriQue(PriorityQueue<Vertex> minKeyPriQueue) {
 		
-		PriorityQueue<Vertex> temp = new PriorityQueue<>();
-		Iterator<Vertex> iterator = minPriQueue.iterator();
+		PriorityQueue<Vertex> temp = new PriorityQueue<>(comSortByKey);
+		Iterator<Vertex> iterator = minKeyPriQueue.iterator();
 		while (iterator.hasNext()) {
 			temp.add(iterator.next());
 		}
 		return temp;
+		
 	}
+	
+	private Comparator<Vertex> comSortByKey = new Comparator<Vertex>() {
+
+		@Override
+		public int compare(Vertex o1, Vertex o2) {
+			// TODO Auto-generated method stub
+			return o1.getKey() - o2.getKey();
+		}
+		
+	};
+	
+	public void dijkstra (Vertex sVertex) {
+		
+		Edge edge;
+		Vertex vertex;
+		PriorityQueue<Vertex> minDistQueue = new PriorityQueue<>(comSortByDist);
+		initSingleSource(sVertex, minDistQueue);
+		
+		while (!minDistQueue.isEmpty()) {
+			
+			vertex = minDistQueue.poll();
+			for (int i = 0; i < vertexNum; i++) {
+				
+				edge = adj[vertex.getIndex()][i];
+				if (edge.getWeight()!= MAX_VALUE) {
+					
+					relax(vertex, edge.geteVertex(), edge);
+				}
+			}
+		}
+	}
+	
+	private void initSingleSource(Vertex sVertex, Queue<Vertex> minDistQueue) {
+		
+		Vertex vertex;
+		for (int i = 0; i < vertexNum; i++) {
+			vertex = vertexs.get(i);
+			if (vertex.equals(sVertex)) {
+				vertex.setDistFromS(0);
+			}
+			else {
+				vertex.setDistFromS(MAX_VALUE);
+			}
+			vertex.setPreNode(NIL);
+			minDistQueue.offer(vertex);
+		}
+	}
+	
+	private void relax(Vertex aVertex, Vertex bVertex, Edge edge) {
+		
+		int dist = aVertex.getDistFromS() + edge.getWeight();
+		if (bVertex.getDistFromS() > dist) {
+			bVertex.setDistFromS(dist);
+			bVertex.setPreNode(aVertex);
+		}
+	}
+	
+	private Comparator<Vertex> comSortByDist = new Comparator<Vertex>() {
+
+		@Override
+		public int compare(Vertex o1, Vertex o2) {
+			// TODO Auto-generated method stub
+			return o1.getDistFromS() - o2.getDistFromS();
+		}
+	};
+	
+	
 	
 	public static void main(String[] args) {
 		   
 		Iterator<Edge> iterator;
-		AdjMatrixGraph graph = new AdjMatrixGraph(false, 9, 14);
+		AdjMatrixGraph graph = new AdjMatrixGraph(true, 5, 10);
 		graph.createGraph();
 		graph.printGraph();
 //		graph.BFS(graph.getVertexByLabel("s"));
 //		graph.printPath(graph.getVertexByLabel("s"), graph.getVertexByLabel("u"));
 //		graph.DFS();
-		iterator = graph.MstPrim(new Vertex("a")).iterator();
-		while (iterator.hasNext()) {
-			System.out.println(iterator.next());
-		}	
+//		iterator = graph.MstPrim(new Vertex("a")).iterator();
+//		while (iterator.hasNext()) {
+//			System.out.println(iterator.next());
+//		}	
+		
+		graph.dijkstra(new Vertex("t"));
+		graph.printPath(graph.getVertexByLabel("t"), graph.getVertexByLabel("z"));
 	}
 }

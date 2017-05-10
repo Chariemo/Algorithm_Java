@@ -1,6 +1,6 @@
 package graph;
 
-public class Vertex implements Comparable<Vertex>{
+public class Vertex {
 
 	public static final Vertex NIL = new Vertex(null);
 	private int index;
@@ -79,11 +79,6 @@ public class Vertex implements Comparable<Vertex>{
 		}
 		
 		return result;
-	}
-	@Override
-	public int compareTo(Vertex o) {
-
-		return this.key > o.getKey() ? 1 : (this.key < o.getKey() ? -1 : 0);			
 	}
 
 	public String toString() {
