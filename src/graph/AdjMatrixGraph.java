@@ -138,7 +138,6 @@ public class AdjMatrixGraph {
 		
 		Vertex vertex = null, toVertex = null;
 		for (int i = 0; i < vertexNum; i++) {
-			
 			vertex = vertexs.get(i);
 			if (vertex != NIL) {
 				vertex.setColor(WHITE);
@@ -157,14 +156,14 @@ public class AdjMatrixGraph {
 			vertex = queue.poll();
 			int index = vertex.getIndex();
 			for (int i = 0; i < vertexNum; i++) {
-				
 				if (adj[index][i].getWeight() != MAX_VALUE) {
+					
 					toVertex = vertexs.get(i);
 					if (toVertex.getColor() == WHITE) {
+						
 						toVertex.setColor(GRAY);
 						toVertex.setDistFromS(toVertex.getDistFromS()+1);
 						toVertex.setPreNode(vertex);
-						
 						queue.add(toVertex);
 					}
 				}
@@ -241,23 +240,23 @@ public class AdjMatrixGraph {
 		Edge edge;
 		Vertex sVertex, eVertex;
 		int sIndex, eIndex;
-		for (int i = 0; i < vertexNum; i++) {
-			
+		
+		for (int i = 0; i < vertexNum; i++) {//初始化msts 以每个节点的序号为树标识
 			set = new HashSet<>();
 			set.add(vertexs.get(i));
 			msts.put(i, set);
 		}
 		Collections.sort(edges);
 		Iterator<Edge> iterator = edges.iterator();
+		
 		while (iterator.hasNext()) {
-			
 			edge = iterator.next();
 			sVertex = edge.getsVertex();
 			eVertex = edge.geteVertex();
-			if ((sIndex = findSet(sVertex)) != (eIndex = findSet(eVertex))) {
+			if ((sIndex = findSet(sVertex)) != (eIndex = findSet(eVertex))) { //是否是在同一棵树
 				mst.add(edge);
-				msts.get(sIndex).addAll(msts.get(eIndex));
-				msts.remove(eIndex);
+				msts.get(sIndex).addAll(msts.get(eIndex)); //合并
+				msts.remove(eIndex); //删除被合并的mst
 			}
 		}
 		
@@ -286,8 +285,8 @@ public class AdjMatrixGraph {
 		Edge edge;
 		int index;
 		PriorityQueue<Vertex> minKeyPriQueue = new PriorityQueue<>(comSortByKey);
+		
 		for (int i = 0; i < vertexNum; i++) {
-			
 			vertex = vertexs.get(i);
 			if (vertex.equals(sVertex)) {
 				vertex.setKey(0);
@@ -298,16 +297,17 @@ public class AdjMatrixGraph {
 			vertex.setPreNode(NIL);
 			minKeyPriQueue.offer(vertex);
 		}
+		
 		while (!minKeyPriQueue.isEmpty()) {
 			
 			vertex = minKeyPriQueue.poll();
 			index = vertex.getIndex();
+			
 			for (int i = 0; i < vertexNum; i++) {
-				
 				edge = adj[index][i];
 				tVertex = edge.geteVertex();
+				
 				if (tVertex != null && minKeyPriQueue.contains(tVertex) && edge.getWeight() < tVertex.getKey()) {
-					
 					tVertex.setKey(edge.getWeight());
 					tVertex.setPreNode(vertex);
 				}
@@ -337,7 +337,6 @@ public class AdjMatrixGraph {
 
 		@Override
 		public int compare(Vertex o1, Vertex o2) {
-			// TODO Auto-generated method stub
 			return o1.getKey() - o2.getKey();
 		}
 		
@@ -393,7 +392,6 @@ public class AdjMatrixGraph {
 
 		@Override
 		public int compare(Vertex o1, Vertex o2) {
-			// TODO Auto-generated method stub
 			return o1.getDistFromS() - o2.getDistFromS();
 		}
 	};
@@ -429,6 +427,11 @@ public class AdjMatrixGraph {
 			}
 		}
 		
+		return distMatix;
+	}
+	
+	public void printShortestPreVer() {
+		
 		System.out.println();
 		for (int i = 0 ; i < vertexNum; i++) {
 			
@@ -450,8 +453,6 @@ public class AdjMatrixGraph {
 			}
 			System.out.println();
 		}
-		
-		return distMatix;
 	}
 	
 	public void printShortestPath(Vertex sVertex, Vertex eVertex) {
