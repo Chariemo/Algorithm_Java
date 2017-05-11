@@ -26,6 +26,7 @@ public class AdjMatrixGraph {
 	private int edgeNum;
 	private boolean graphType;
 	private Edge adj[][];
+	private Vertex preVerTree[][];
 	private HashSet<Edge> mst = new HashSet<>();
 	private HashMap<Integer, HashSet<Vertex>> msts = new HashMap<>();
 	
@@ -50,9 +51,11 @@ public class AdjMatrixGraph {
 		
 		System.out.print("Please input " + vertexNum + " vertexs: ");
 		Scanner input = new Scanner(System.in);
+		Vertex vertex;
 		for (int i = 0; i < vertexNum; i++) {
-			
-			vertexs.add(new Vertex(input.next(), i));
+			vertex = new Vertex(input.next(), i);
+			vertex.setPreNode(NIL);
+			vertexs.add(vertex);
 		}
 		
 		System.out.println("Please input the edges and weight:(as: A B 20)");
@@ -108,6 +111,7 @@ public class AdjMatrixGraph {
 	
 	public void printGraph() {
 		
+		System.out.println();
 		for (int i = 0 ; i < vertexNum; i++) {
 			
 			System.out.print("\t" + vertexs.get(i).getLabel());
@@ -394,12 +398,80 @@ public class AdjMatrixGraph {
 		}
 	};
 	
+	public int[][] floyd() {
+		
+		int dist;
+		int [][] distMatix = new int[vertexNum][vertexNum];
+		preVerTree = new Vertex[vertexNum][vertexNum];
+		
+		for (int i = 0; i < vertexNum; i++) {
+			for (int j = 0; j < vertexNum; j++) {
+				distMatix[i][j] = adj[i][j].getWeight();
+				if (i != j && adj[i][j].getWeight() != MAX_VALUE) {
+					preVerTree[i][j] = vertexs.get(i);
+				}
+				else {
+					preVerTree[i][j] = NIL;
+				}
+			}
+		}
+		
+		for (int k = 0; k < vertexNum; k ++) {
+			for (int i = 0; i < vertexNum; i++) {
+				for (int j = 0; j < vertexNum; j++) {
 	
+					dist = distMatix[i][k] + distMatix[k][j];
+					if (i != j && distMatix[i][j] > dist) {
+						distMatix[i][j] = dist;
+						preVerTree[i][j] = preVerTree[k][j];
+					}
+				}
+			}
+		}
+		
+		System.out.println();
+		for (int i = 0 ; i < vertexNum; i++) {
+			
+			System.out.print("\t" + vertexs.get(i).getLabel());
+		}
+		System.out.println();
+		
+		for (int i = 0; i < vertexNum; i++) {
+			
+			System.out.print(vertexs.get(i).getLabel());
+			for (int j = 0; j < vertexNum; j++) {
+				
+				if (preVerTree[i][j] == NIL) {
+					System.out.print("\tZ");
+				}
+				else {
+					System.out.print("\t" + preVerTree[i][j]);
+				}
+			}
+			System.out.println();
+		}
+		
+		return distMatix;
+	}
+	
+	public void printShortestPath(Vertex sVertex, Vertex eVertex) {
+		
+		if (sVertex == eVertex) {
+			System.out.print("->" + sVertex);
+		}
+		else if (preVerTree[sVertex.getIndex()][eVertex.getIndex()] == NIL){
+			System.out.println("No path from " + sVertex + " to " + eVertex);
+		}
+		else {
+			printShortestPath(sVertex, preVerTree[sVertex.getIndex()][eVertex.getIndex()]);
+			System.out.print("->" + eVertex);
+		}
+	}
 	
 	public static void main(String[] args) {
 		   
 		Iterator<Edge> iterator;
-		AdjMatrixGraph graph = new AdjMatrixGraph(true, 5, 10);
+		AdjMatrixGraph graph = new AdjMatrixGraph(true, 5, 9);
 		graph.createGraph();
 		graph.printGraph();
 //		graph.BFS(graph.getVertexByLabel("s"));
@@ -409,8 +481,9 @@ public class AdjMatrixGraph {
 //		while (iterator.hasNext()) {
 //			System.out.println(iterator.next());
 //		}	
-		
-		graph.dijkstra(new Vertex("t"));
-		graph.printPath(graph.getVertexByLabel("t"), graph.getVertexByLabel("z"));
+//		
+//		graph.dijkstra(new Vertex("t"));
+		graph.floyd();
+		graph.printShortestPath(graph.getVertexByLabel("a"), graph.getVertexByLabel("e"));
 	}
 }

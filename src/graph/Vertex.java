@@ -2,7 +2,7 @@ package graph;
 
 public class Vertex {
 
-	public static final Vertex NIL = new Vertex(null);
+	public static final Vertex NIL = new Vertex("NIL");
 	private int index;
 	private String label;
 	private Vertex preNode;
