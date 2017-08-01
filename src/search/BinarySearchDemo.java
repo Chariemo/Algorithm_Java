@@ -83,6 +83,44 @@ public class BinarySearchDemo {
         return -1;
     }
 
+    //旋转数组的二分查找 e.g {9, 10, 15, 1, 2, 5, 7}
+    public int binS_rotated(int target) {
+
+        this.low = 0;
+        this.high = arr.length - 1;
+        int valueStart = arr[0];
+        int valueEnd = arr[high];
+        int mid;
+
+        while (low + 1 < high) { //预留至少2个元素自行判断
+            mid = low + ((high - low) >> 1);
+            if (arr[mid] < valueStart) { //mid以右有序
+                if (target > arr[mid] && target <= valueEnd) {  //target在mid以右
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            } else {    //mid以左有序
+                if (target < arr[mid] && target >= valueStart) { //target在mid以左
+                    high = mid - 1;
+                } else {
+                    low = mid + 1;
+                }
+            }
+            if (arr[mid] == target) {
+                return mid;
+            }
+        }
+
+        if (arr[low] == target) {
+            return low;
+        } else if (arr[high] == target) {
+            return high;
+        }
+
+        return -1;
+    }
+
     public static void main(String[] args) {
 
         int[] arr = {-1, 1, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4};
@@ -98,5 +136,8 @@ public class BinarySearchDemo {
         System.out.println("search first '5': " + binarySearch.binS_first(5));
         System.out.println("search last '5': " + binarySearch.binS_last(5));
 
+        int[] arrRotate = {10, 12, 15, 1, 2, 5, 7};
+        binarySearch = new BinarySearchDemo(arrRotate);
+        System.out.println("search '12': " + binarySearch.binS_rotated(7));
     }
 }
