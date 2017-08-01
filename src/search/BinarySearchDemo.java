@@ -11,6 +11,9 @@ public class BinarySearchDemo {
 
     public BinarySearchDemo(int[] arr) {
 
+        if (arr == null || arr.length < 1) {
+            throw new IllegalArgumentException("arr can't be null");
+        }
         this.arr = arr;
     }
 
@@ -94,5 +97,6 @@ public class BinarySearchDemo {
         System.out.println("search last '-2': " + binarySearch.binS_last(-2));
         System.out.println("search first '5': " + binarySearch.binS_first(5));
         System.out.println("search last '5': " + binarySearch.binS_last(5));
+
     }
 }
