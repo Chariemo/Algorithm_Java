@@ -92,7 +92,7 @@ public class BinarySearchDemo {
         int valueEnd = arr[high];
         int mid;
 
-        while (low + 1 < high) { //预留至少2个元素自行判断
+        while (low + 1 < high) { //预留至多2个元素自行判断
             mid = low + ((high - low) >> 1);
             if (arr[mid] < valueStart) { //mid以右有序
                 if (target > arr[mid] && target <= valueEnd) {  //target在mid以右
