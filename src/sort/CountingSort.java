@@ -1,6 +1,10 @@
 package sort;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Created by Charley on 2017/8/19.
@@ -86,15 +90,18 @@ public class CountingSort {
         System.out.println("Arrays.Sort time: " + time);
 
 
-        List<Integer> list = new ArrayList<>(len - 1);
-        for (int i = 1; i < len; i++) {
-            list.add(arr[i]);
-        }
-        System.out.println("list.length: " + list.size());
-        time = System.currentTimeMillis();
-        Collections.sort(list);
-        time = System.currentTimeMillis() - time;
-        System.out.println("Collection.Sort time: " + time);
+//        List<Integer> list = new ArrayList<>(len - 1);
+//        for (int i = 1; i < len; i++) {
+//            list.add(arr[i]);
+//        }
+//        System.out.println("list.length: " + list.size());
+//        time = System.currentTimeMillis();
+        Clock clock = Clock.systemUTC();
+        time = clock.millis();
+//        Collections.sort(list);
+        Arrays.parallelSort(arr);
+        time = clock.millis() - time;
+        System.out.println("Arrays.parallelSort time: " + time);
 
     }
 }
