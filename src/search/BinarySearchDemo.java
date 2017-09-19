@@ -69,7 +69,7 @@ public class BinarySearchDemo {
             mid = low + ((high - low) >> 1);
             if (target >= arr[mid]) {
                 low = mid;
-            } else { // arr[mid] < target
+            } else { // arr[mid] > target
                 high = mid - 1;
             }
         }
@@ -108,8 +108,9 @@ public class BinarySearchDemo {
                 }
             }
             if (arr[mid] == target) {
-                return mid;
+            return mid;
             }
+
         }
 
         if (arr[low] == target) {
